@@ -41,7 +41,6 @@ class Register extends React.Component {
           return false;
         } else if(!this.isEmailValid(this.state)){
             error={message:"Email does not belong to VIT organization"}
-            console.log('hey');
             this.setState({ errors: errors.concat(error) });
             return false;
         } else {
@@ -60,8 +59,6 @@ class Register extends React.Component {
 
       isEmailValid=({email})=>{
           let valid=email.split('@');
-          console.log(valid[1]==='vit.edu.in');
-          console.log(valid[1]);
           if(valid[1]==='vit.edu.in'){
               return true;
           }
@@ -96,7 +93,7 @@ class Register extends React.Component {
             .auth()
             .createUserWithEmailAndPassword(this.state.email, this.state.password)
             .then(createdUser => {
-            //   console.log(createdUser);
+              console.log(createdUser);
               createdUser.user
                 .updateProfile({
                   displayName: this.state.username,
@@ -106,8 +103,11 @@ class Register extends React.Component {
                 })
                 .then(() => {
                   this.saveUser(createdUser).then(() => {
-                    console.log("user saved");
+                    // console.log("user saved");
                   });
+                })
+                .then(()=>{
+                this.setState({ errors: [], loading: false });
                 })
                 .catch(err => {
                   console.error(err);
@@ -126,6 +126,12 @@ class Register extends React.Component {
             });
         }
     }
+        saveUser = createdUser => {
+            return this.state.usersRef.child(createdUser.user.uid).set({
+            name: createdUser.user.displayName,
+            avatar: createdUser.user.photoURL
+            });
+        };
     render() {
         const {
             username,

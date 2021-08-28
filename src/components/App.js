@@ -1,3 +1,4 @@
+// import firebase  from '../firebase';
 import './App.css';
 
 function App() {
@@ -13,7 +14,9 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React
+          {/* <button onClick={firebase.auth().signOut()}>
+            logout
+          </button> */}
         </a>
       </header>
     </div>
