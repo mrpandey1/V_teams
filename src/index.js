@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './components/App';
 import reportWebVitals from './reportWebVitals';
 
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
+import 'semantic-ui-css/semantic.min.css'
 
 import { BrowserRouter as Router,Switch,Route } from 'react-router-dom';
 
@@ -24,6 +24,6 @@ ReactDOM.render(
     
   </Root>,
   document.getElementById('root')
-);
+); 
 
 reportWebVitals();

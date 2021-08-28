@@ -1,7 +1,7 @@
-import firebase from 'firebase/app'
-import 'firebase/auth'
-import 'firebase/database'
+import firebase from "firebase/app";
+import 'firebase/auth';
 import 'firebase/storage'
+import 'firebase/database'
 const firebaseConfig = {
     apiKey: "AIzaSyCnl8I7m-ANG0tJH1PiNhXfIrwE1lW6WXc",
     authDomain: "v-teams.firebaseapp.com",
@@ -12,7 +12,6 @@ const firebaseConfig = {
     measurementId: "G-R06FSWKV5N"
   };
   
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+  firebase.initializeApp(firebaseConfig);
 
-export default firebase;
+  export default firebase;
