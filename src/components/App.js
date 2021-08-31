@@ -1,26 +1,32 @@
-// import firebase  from '../firebase';
-import './App.css';
+import React from 'react'
+import { Grid } from 'semantic-ui-react'
+import firebase from 'firebase';
+import { connect } from "react-redux";
+import ColorPanel from './ColorPanel/ColorPanel'
+import SidePanel from './SidePanel/SidePanel'
+import Messages from './Messages/Messages'
+import './App.css'
+const App = ({ currentUser, currentChannel, isPrivateChannel, userPosts, primaryColor,secondaryColor }) => (
+  <Grid columns="equal" className="app" style={{ background: secondaryColor }}>
+      <ColorPanel 
+        key={currentUser && currentUser.name}
+        currentUser={currentUser}
+      />
+    <SidePanel
+      key={currentUser && currentUser.uid}
+      currentUser={currentUser}
+      primaryColor={primaryColor}
+    />
+      <Messages/>
+      {/* <button onClick={firebase.auth().signOut()}>
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {/* <button onClick={firebase.auth().signOut()}>
-            logout
-          </button> */}
-        </a>
-      </header>
-    </div>
-  );
-}
+      </button> */}
+    </Grid>
+);
+const mapStateToProps = state => ({
+  currentUser: state.user.currentUser,
+  primaryColor: state.colors.primaryColor,
+  secondaryColor: state.colors.secondaryColor
+});
 
-export default App;
+export default connect(mapStateToProps)(App);

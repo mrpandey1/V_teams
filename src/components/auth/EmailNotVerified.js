@@ -12,7 +12,8 @@ import {
 
 class EmailNotVerified extends React.Component {
     state = {
-        sent: false
+        sent: false,
+        loading:false
       };
     componentDidMount(){
         firebase.auth().onAuthStateChanged(user=>{
@@ -44,7 +45,7 @@ class EmailNotVerified extends React.Component {
           <Form size="large">
             <Segment>
                 <Message>
-                    nishant.pandey@vit.edu.in
+                  {firebase.auth().currentUser.email}
                 </Message>
                 <Button
                 // disabled={loading}

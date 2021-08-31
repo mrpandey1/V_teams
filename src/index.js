@@ -13,7 +13,7 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import { BrowserRouter as Router,Switch,Route,withRouter } from 'react-router-dom';
 import EmailNotVerified from './components/auth/EmailNotVerified';
 import rootReducer from './reducers/index'
-import {setUser} from './actions'
+import {setUser,clearUser} from './actions'
 import Spinner from './Spinner';
 
 const store = createStore(rootReducer, composeWithDevTools());
@@ -27,14 +27,17 @@ class Root extends React.Component {
           this.props.history.push('/');
         }else{
           this.props.history.push('/verifyEmail');
+          this.props.clearUser();
         }
       }else {
         this.props.history.push("/login");
+        this.props.clearUser();
       }
     })
   }
   render(){
-    return this.props.isLoading ?<Spinner/>:(
+    return (
+    this.props.isLoading ?<Spinner/>:
       <Switch>
         <Route exact path='/' component={App}/>
         <Route path='/login' component={Login}/>
@@ -51,7 +54,7 @@ const mapStateFromProps = state => ({
 const RootWithAuth = withRouter(
   connect(
     mapStateFromProps,
-    { setUser }
+    { setUser, clearUser }
   )(Root)
 );
 ReactDOM.render(
