@@ -4,4 +4,6 @@ body,
     height: 100vh;
     background: #FDF5EF;
     padding: 1em;
+    margin: 0;
+    padding: 0;
 }
