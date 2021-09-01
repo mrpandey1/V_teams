@@ -2,6 +2,7 @@ import React from "react";
 import firebase from "../../firebase";
 import { connect } from "react-redux";
 import { setCurrentChannel, setPrivateChannel } from "../../actions";
+import { nanoid } from 'nanoid'
 import {
   Menu,
   Icon,
@@ -11,72 +12,50 @@ import {
   Button,
   Label
 } from "semantic-ui-react";
-import { firestore } from "firebase";
-import Spinner from "../../Spinner";
 
 class Channels extends React.Component {
   state = {
     activeChannel: "",
     user: this.props.currentUser,
-    userId:this.props.currentUser.uid,
+    userId: this.props.currentUser.uid,
     channel: null,
     channels: [],
     channelName: "",
     channelDetails: "",
     channelsRef: firebase.database().ref("channels"),
     messagesRef: firebase.database().ref("messages"),
-    typingRef:firebase.database().ref('typing'),
+    typingRef: firebase.database().ref('typing'),
     usersRef: firebase.database().ref("users"),
+    codeRef: firebase.database().ref('channelCode'),
     notifications: [],
     modal: false,
     firstLoad: true,
-    loading:true
+    loading: true,
+    joinModal: false,
+    channelCode: ""
   };
 
 
   componentDidMount() {
-    this.addListeners_(this.state.userId);
+    this.addListeners(this.state.userId);
   }
 
   componentWillUnmount() {
     this.removeListeners();
   }
 
-  addListeners_ = userId => {
-    let loadedChannels=[]
-    let loc=[]
-    this.state.usersRef.child(`${userId}/channels`).on('child_added',snap2=>{
-    this.state.channelsRef.on("child_added", snap => {
-      if(snap2.val().key===snap.val().id){
-        loadedChannels.push(snap.val());
+  addListeners = userId => {
+    let loadedChannels = []
+    this.state.usersRef.child(`${userId}/channels`).on('child_added', snap2 => {
+      this.state.channelsRef.on("child_added", snap => {
+        if (snap2.val().key === snap.val().id) {
+          loadedChannels.push(snap.val());
           this.setState({ channels: loadedChannels }, () => this.setFirstChannel());
-        this.addNotificationListener(snap.key);
-      }
+          this.addNotificationListener(snap.key);
+        }
+      })
     })
-  })
-}
-
-//   addListeners = userId => {
-//     let loadedChannels=[]
-//     let loc=[]
-//     this.state.usersRef.child(`${userId}/channels`).on('child_added',snap=>{
-//       loc.unshift(snap.val().key);
-//     })
-//     this.state.channelsRef.on("child_added", snap => {
-//       if(loc.includes(snap.val().id)){
-//         console.log(snap.val().name);
-//         loadedChannels.push(snap.val());
-//           this.setState({ channels: loadedChannels }, () => this.setFirstChannel());
-//         this.addNotificationListener(snap.key);
-//       }else{
-//         console.log(loc);
-//         console.log('not..')
-//       }
-//     })
-
-// };
-
-
+  }
 
 
   addNotificationListener = channelId => {
@@ -122,7 +101,7 @@ class Channels extends React.Component {
 
   removeListeners = () => {
     this.state.channelsRef.off();
-    this.state.channels.forEach(channel=>{
+    this.state.channels.forEach(channel => {
       this.state.messagesRef.child(channel.id).off();
     })
   };
@@ -141,38 +120,48 @@ class Channels extends React.Component {
     const { channelsRef, channelName, channelDetails, user } = this.state;
     const key = channelsRef.push().key;
     const newChannel = {
-      id: key,
-      name: channelName,
-      details: channelDetails,
-      createdBy: {
-        name: user.displayName,
-        avatar: user.photoURL
-      }
+
     };
 
-    //adding channel in user document
-    this.state.usersRef
-      .child(`${this.state.userId}/channels`)
-      .push()
-      .update({
-          key
-      })
+    let code=nanoid(6)
+    this.state.codeRef
+      .child(code)
+      .update({ key })
       .then(() => {
-        this.closeModal();
+        // adding channel in channel document
+        channelsRef
+          .child(key)
+          .update({
+            id: key,
+            name: channelName,
+            details: channelDetails,
+            createdBy: {
+              name: user.displayName,
+              avatar: user.photoURL
+            },
+            code:code,
+          })
+          .then(() => {
+            this.setState({ channelName: "", channelDetails: "" });
+            //adding channel in user document
+            this.state.usersRef
+              .child(`${this.state.userId}/channels`)
+              .push()
+              .update({
+                key
+              })
+              .then(() => {
+
+              })
+              .catch(err => console.error(err));
+            this.closeModal();
+          })
+          .catch(err => {
+            console.error(err);
+          });
       })
       .catch(err => console.error(err));
 
-    //adding channel in channel document
-    channelsRef
-      .child(key)
-      .update(newChannel)
-      .then(() => {
-        this.setState({ channelName: "", channelDetails: "" });
-        this.closeModal();
-      })
-      .catch(err => {
-        console.error(err);
-      });
   };
 
   handleSubmit = event => {
@@ -182,17 +171,27 @@ class Channels extends React.Component {
     }
   };
 
+  handleSubmit2 = event => {
+    event.preventDefault();
+    if (this.state.channelCode) {
+      this.joinChannel();
+    }
+  }
+  joinChannel = () => {
+
+  }
+
   handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
   };
 
   changeChannel = channel => {
-      console.log(this.state.channel);
+    console.log(this.state.channel);
     this.setActiveChannel(channel);
     this.state.typingRef
-    .child(this.state.channel.id)
-    .child(this.state.user.uid)
-    .remove();
+      .child(this.state.channel.id)
+      .child(this.state.user.uid)
+      .remove();
     this.clearNotifications();
     this.props.setCurrentChannel(channel);
     this.props.setPrivateChannel(false);
@@ -252,10 +251,14 @@ class Channels extends React.Component {
 
   openModal = () => this.setState({ modal: true });
 
+  openJoinChannel = () => this.setState({ joinModal: true });
+
+  closeJoinChannel = () => this.setState({ joinModal: false });
+
   closeModal = () => this.setState({ modal: false });
 
   render() {
-    const { channels, modal } = this.state;
+    const { channels, modal, joinModal } = this.state;
 
     return (
       // this.state.channels.length===0?<Spinner/>:
@@ -265,10 +268,34 @@ class Channels extends React.Component {
             <span>
               <Icon name="exchange" /> CHANNELS
             </span>{" "}
-            ({channels.length}) <Icon name="add" onClick={this.openModal} />
+            ({channels.length})
+            <Icon name="add circle" onClick={this.openJoinChannel} />
+            <Icon name="add" onClick={this.openModal} />
           </Menu.Item>
           {this.displayChannels(channels)}
         </Menu.Menu>
+        {/* Join Channel Modal */}
+
+        <Modal basic open={joinModal} onClose={this.closeJoinChannel}>
+          <Modal.Header>Join with code</Modal.Header>
+          <Modal.Content>
+            <Form onSubmit={this.handleSubmit2}>
+              <Form.Field>
+                <Input
+                  fluid
+                  label="Enter Code"
+                  name="channelCode"
+                  onChange={this.handleChange}
+                />
+              </Form.Field>
+            </Form>
+          </Modal.Content>
+          <Modal.Actions>
+            <Button color="green" inverted onClick={this.handleSubmit2}>
+              <Icon name="checkmark" /> Join
+            </Button>
+          </Modal.Actions>
+        </Modal>
 
         {/* Add Channel Modal */}
         <Modal basic open={modal} onClose={this.closeModal}>

@@ -1,6 +1,5 @@
 import React from 'react'
 import { Grid } from 'semantic-ui-react'
-import firebase from 'firebase';
 import { connect } from "react-redux";
 import ColorPanel from './ColorPanel/ColorPanel'
 import SidePanel from './SidePanel/SidePanel'
