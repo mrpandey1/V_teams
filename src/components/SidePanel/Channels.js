@@ -32,7 +32,7 @@ class Channels extends React.Component {
     firstLoad: true,
     loading: true,
     joinModal: false,
-    channelCode: ""
+    channelCode: null,
   };
 
 
@@ -119,14 +119,11 @@ class Channels extends React.Component {
   addChannel = () => {
     const { channelsRef, channelName, channelDetails, user } = this.state;
     const key = channelsRef.push().key;
-    const newChannel = {
-
-    };
 
     let code=nanoid(6)
     this.state.codeRef
       .child(code)
-      .update({ key })
+      .update({ key,code:code })
       .then(() => {
         // adding channel in channel document
         channelsRef
@@ -164,6 +161,20 @@ class Channels extends React.Component {
 
   };
 
+  searchUserChannel=channelId=>{
+    let ans=false;
+    this.state.usersRef
+    .child(`${this.state.userId}/channels`)
+    .on('value',(snapshot)=>{
+      snapshot.forEach(element => {
+        if(element.val().key===channelId){
+          ans=true;
+        }
+      });
+    })
+    return ans;
+  }
+
   handleSubmit = event => {
     event.preventDefault();
     if (this.isFormValid(this.state)) {
@@ -174,10 +185,41 @@ class Channels extends React.Component {
   handleSubmit2 = event => {
     event.preventDefault();
     if (this.state.channelCode) {
-      this.joinChannel();
+      this.joinChannel(this.state);
     }
   }
-  joinChannel = () => {
+
+  joinChannel = ({ codeRef,channelCode }) => {
+    let found=false;
+    let validCode=false;
+    codeRef
+    .on('value',(snapshot)=>{
+      snapshot.forEach(data=>{
+        if(data.val().code===channelCode){
+          if(!this.searchUserChannel(data.val().key)){
+            this.state.usersRef
+            .child(`${this.state.userId}/channels`)
+            .push()
+            .update({
+              key:data.val().key
+            })
+            .then(() => {
+                found=true;
+                this.closeJoinChannel();
+                return 0;
+            })
+            .catch(err => console.error(err));
+          }
+          validCode=true;
+        }
+      })
+    })
+    if(!validCode){
+      console.log("Invalid Code")
+    }
+    else if(!found){
+      console.log("Already member of the team");
+    }
 
   }
 
