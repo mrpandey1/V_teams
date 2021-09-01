@@ -13,7 +13,6 @@ import {
 class EmailNotVerified extends React.Component {
     state = {
         sent: false,
-        loading:false
       };
     componentDidMount(){
         firebase.auth().onAuthStateChanged(user=>{

@@ -2,6 +2,8 @@ import React from "react";
 import UserPanel from "./UserPanel";
 import { Menu } from "semantic-ui-react";
 import Starred from "./Starred";
+import Channels from "./Channels";
+import DirectMessages from "./DirectMessages";
 class SidePanel extends React.Component {
   render() {
     const { currentUser,primaryColor } = this.props;
@@ -16,6 +18,8 @@ class SidePanel extends React.Component {
       >
         <UserPanel primaryColor={primaryColor} currentUser={currentUser} />
         <Starred currentUser={currentUser} />
+        <Channels currentUser={currentUser} />
+        <DirectMessages currentUser={currentUser}/>
       </Menu>
     );
   }
