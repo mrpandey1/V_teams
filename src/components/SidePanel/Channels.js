@@ -10,7 +10,8 @@ import {
   Form,
   Input,
   Button,
-  Label
+  Label,
+  Message
 } from "semantic-ui-react";
 
 class Channels extends React.Component {
@@ -33,6 +34,7 @@ class Channels extends React.Component {
     loading: true,
     joinModal: false,
     channelCode: null,
+    error:''
   };
 
 
@@ -179,6 +181,8 @@ class Channels extends React.Component {
     event.preventDefault();
     if (this.isFormValid(this.state)) {
       this.addChannel();
+    }else{
+      this.setState({error:"Invalid Details"})
     }
   };
 
@@ -186,6 +190,8 @@ class Channels extends React.Component {
     event.preventDefault();
     if (this.state.channelCode) {
       this.joinChannel(this.state);
+    }else{
+      this.setState({error:"Please enter code"})
     }
   }
 
@@ -208,17 +214,23 @@ class Channels extends React.Component {
                 this.closeJoinChannel();
                 return 0;
             })
-            .catch(err => console.error(err));
+            .catch((err)=>{
+              this.setState({error:"Something went wrong"})
+            });
           }
           validCode=true;
         }
       })
     })
+    console.log(validCode);
+    console.log(found);
     if(!validCode){
-      console.log("Invalid Code")
+      this.setState({error:"Invalid Code"})
     }
     else if(!found){
-      console.log("Already member of the team");
+      this.setState({error:"Already member of the channel"})
+    }else{
+      this.setActiveChannel(channelCode);
     }
 
   }
@@ -300,7 +312,7 @@ class Channels extends React.Component {
   closeModal = () => this.setState({ modal: false });
 
   render() {
-    const { channels, modal, joinModal } = this.state;
+    const { channels, modal, joinModal,error } = this.state;
 
     return (
       // this.state.channels.length===0?<Spinner/>:
@@ -321,6 +333,10 @@ class Channels extends React.Component {
         <Modal basic open={joinModal} onClose={this.closeJoinChannel}>
           <Modal.Header>Join with code</Modal.Header>
           <Modal.Content>
+            { error.length>0 ? <Message error>
+              <h3>Error</h3>
+              <p>{error}</p>
+            </Message>:<div></div>}
             <Form onSubmit={this.handleSubmit2}>
               <Form.Field>
                 <Input
@@ -335,6 +351,9 @@ class Channels extends React.Component {
           <Modal.Actions>
             <Button color="green" inverted onClick={this.handleSubmit2}>
               <Icon name="checkmark" /> Join
+            </Button>
+            <Button color="red" inverted onClick={this.closeJoinChannel}>
+              <Icon name="remove" /> Cancel
             </Button>
           </Modal.Actions>
         </Modal>
