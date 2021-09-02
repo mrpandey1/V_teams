@@ -5,6 +5,7 @@ import ColorPanel from './ColorPanel/ColorPanel'
 import SidePanel from './SidePanel/SidePanel'
 import Messages from './Messages/Messages'
 import './App.css'
+import MetaPanel from './MetaPanel/MetaPanel';
 const App = ({ currentUser, currentChannel, isPrivateChannel, userPosts, primaryColor,secondaryColor }) => (
   <Grid columns="equal" className="app" style={{ background: secondaryColor }}>
     <ColorPanel
@@ -25,10 +26,16 @@ const App = ({ currentUser, currentChannel, isPrivateChannel, userPosts, primary
         isPrivateChannel={isPrivateChannel}
       />
     </Grid.Column>
-      {/* <button onClick={firebase.auth().signOut()}>
 
-      </button> */}
-    </Grid>
+    <Grid.Column width={4}>
+      <MetaPanel
+        key={currentChannel && currentChannel.name}
+        userPosts={userPosts}
+        currentChannel={currentChannel}
+        isPrivateChannel={isPrivateChannel}
+      />
+    </Grid.Column>
+  </Grid>
 );
 const mapStateToProps = state => ({
   currentUser: state.user.currentUser,

@@ -11,6 +11,10 @@ body,
   padding-bottom: 2em;
 }
 
+.code:hover{
+  cursor: pointer;
+}
+
 /* Messages.js */
 .messages {
   height: 60vh;
