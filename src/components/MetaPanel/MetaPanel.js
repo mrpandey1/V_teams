@@ -21,10 +21,6 @@ class MetaPanel extends React.Component {
     const newIndex = activeIndex === index ? -1 : index;
     this.setState({ activeIndex: newIndex });
   };
-  componentDidMount(){
-      console.log(this.state.currentChannel);
-  }
-
   formatCount = num => (num > 1 || num === 0 ? `${num} posts` : `${num} post`);
 
   displayTopPosters = posts =>

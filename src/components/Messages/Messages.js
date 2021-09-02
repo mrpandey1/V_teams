@@ -160,6 +160,11 @@ class Messages extends React.Component {
     );
   };
 
+  handleCall=()=>{
+    console.log("calling")
+    window.open("https://vteams-call.netlify.app", "_blank")
+  }
+
   starChannel = () => {
     if (this.state.isChannelStarred) {
       this.state.usersRef.child(`${this.state.user.uid}/starred`).update({
@@ -287,6 +292,7 @@ class Messages extends React.Component {
           isPrivateChannel={privateChannel}
           handleStar={this.handleStar}
           isChannelStarred={isChannelStarred}
+          handleCall={this.handleCall}
         />
 
         <Segment>

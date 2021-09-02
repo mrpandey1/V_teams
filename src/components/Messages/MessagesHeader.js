@@ -10,7 +10,8 @@ class MessagesHeader extends React.Component {
       searchLoading,
       isPrivateChannel,
       handleStar,
-      isChannelStarred
+      isChannelStarred,
+      handleCall
     } = this.props;
 
     return (
@@ -26,6 +27,10 @@ class MessagesHeader extends React.Component {
             color={isChannelStarred?"yellow":"black"} 
             />
             )}
+            <Icon
+            onClick={handleCall}
+            name={"call"}
+            />
           </span>
           <Header.Subheader>{numUniqueUsers}</Header.Subheader>
         </Header>
