@@ -254,7 +254,7 @@ class Messages extends React.Component {
 
   displayChannelName = channel => {
     return channel
-      ? `${this.state.privateChannel ? "@" : "#"}${channel.name}`
+      ? `${this.state.privateChannel ? "@ " : "# "}${channel.name} `
       : "";
   };
 
