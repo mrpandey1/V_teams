@@ -7,6 +7,7 @@ import {
   Image,
   List
 } from "semantic-ui-react";
+import Todo from "../Todo/Todo";
 
 class MetaPanel extends React.Component {
   state = {
@@ -110,6 +111,7 @@ class MetaPanel extends React.Component {
               </div>
             </Header>
           </Accordion.Content>
+          <Todo channel={channel}></Todo>
         </Accordion>
       </Segment>
     );

@@ -1,0 +1,10 @@
+.todoShow{
+    height: 100px;
+    overflow: scroll;
+    overflow-x: hidden;
+}
+
+.message{
+    margin-bottom: 4px;
+    padding: 1px 10px;
+}
