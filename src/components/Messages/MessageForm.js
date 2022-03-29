@@ -82,7 +82,7 @@ class MessageForm extends React.Component {
     });
   };
 
-  createMessage = (fileUrl = null) => {
+  createMessage = (fileUrl = null,pdf=false,pdfname='') => {
     const message = {
       timestamp: firebase.database.ServerValue.TIMESTAMP,
       user: {
@@ -91,7 +91,13 @@ class MessageForm extends React.Component {
         avatar: this.state.user.photoURL
       }
     };
-    if (fileUrl !== null) {
+    if(pdf){
+      message['image']='https://firebasestorage.googleapis.com/v0/b/v-teams.appspot.com/o/chat%2Ficons8-pdf-48.png?alt=media&token=149d9d4a-4cd0-4498-8730-7f720183fa58';
+      message['type']='pdf';
+      message['pdflink']=fileUrl;
+      message['name']=pdfname;
+    }
+    else if (fileUrl !== null) {
       message["image"] = fileUrl;
     } else {
       message["content"] = this.state.message;
@@ -138,10 +144,17 @@ class MessageForm extends React.Component {
     }
   };
 
-  uploadFile = (file, metadata) => {
+  uploadFile = (file, metadata,pdf,pdfname) => {
+    console.log(pdf.file);
+
     const pathToUpload = this.state.channel.id;
     const ref = this.props.getMessagesRef();
-    const filePath = `${this.getPath()}/${uuidv4()}.jpg`;
+    let filePath=`a`;
+    if(pdf){
+      filePath = `${this.getPath()}/${uuidv4()}.pdf`;
+    }else{
+      filePath = `${this.getPath()}/${uuidv4()}.jpg`;
+    }
 
     this.setState(
       {
@@ -169,7 +182,7 @@ class MessageForm extends React.Component {
             this.state.uploadTask.snapshot.ref
               .getDownloadURL()
               .then(downloadUrl => {
-                this.sendFileMessage(downloadUrl, ref, pathToUpload);
+                this.sendFileMessage(downloadUrl, ref, pathToUpload,pdf,pdfname);
               })
               .catch(err => {
                 console.error(err);
@@ -185,11 +198,11 @@ class MessageForm extends React.Component {
     );
   };
 
-  sendFileMessage = (fileUrl, ref, pathToUpload) => {
+  sendFileMessage = (fileUrl, ref, pathToUpload,pdf,pdfname) => {
     ref
       .child(pathToUpload)
       .push()
-      .set(this.createMessage(fileUrl))
+      .set(this.createMessage(fileUrl,pdf,pdfname))
       .then(() => {
         this.setState({ uploadState: "done" });
       })

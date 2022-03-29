@@ -43,6 +43,7 @@ body,
 
 .message__image {
   padding: 1em;
+  width: 200px;
 }
 
 /* ProgressBar.js */
@@ -185,4 +186,8 @@ body,
   bottom: 5px;
   left: 40px;
   right: 20px;
+}
+
+.pdfmessage:hover{
+  cursor: pointer;
 }

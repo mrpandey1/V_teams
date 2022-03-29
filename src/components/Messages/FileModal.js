@@ -6,11 +6,11 @@ import { Modal, Input, Button, Icon } from "semantic-ui-react";
 class FileModal extends React.Component {
   state={
     file:null,
-    authorized:['image/jpeg','image/png']
+    authorized:['image/jpeg','image/png','application/pdf']
   }
   addFile=event=>{
     const file=event.target.files[0];
-    // console.log(file);
+    console.log(file);
     if(file){
       this.setState({file});
     }
@@ -18,10 +18,15 @@ class FileModal extends React.Component {
   sendFile=()=>{
     const {file}=this.state;
     const {uploadFile,closeModal} = this.props;
+    let pdf=false;
+    let pdfname=file.name;
     if(file!==null){
       if (this.isAuthorized(file.name)){
         const metadata={contentType:mime.lookup(file.name)};
-        uploadFile(file,metadata);
+        if(metadata.contentType=='application/pdf'){
+          pdf=true;
+        }
+        uploadFile(file,metadata,pdf,pdfname);
         closeModal();
         this.clearFile();
       }
@@ -37,7 +42,7 @@ class FileModal extends React.Component {
       <Modal basic open={modal} onClose={closeModal}>
         <Modal.Header>Select an Image File</Modal.Header>
         <Modal.Content>
-          <Input onChange={this.addFile} fluid label="File types: jpg, png" name="file" type="file" />
+          <Input onChange={this.addFile} fluid label="File types: jpg, png, pdf" name="file" type="file" />
         </Modal.Content>
         <Modal.Actions>
           <Button onClick={this.sendFile} color="green" inverted>
