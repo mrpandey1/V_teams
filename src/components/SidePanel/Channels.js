@@ -210,7 +210,6 @@ class Channels extends React.Component {
               key:data.val().key
             })
             .then(() => {
-                found=true;
                 this.closeJoinChannel();
                 return 0;
             })
@@ -218,18 +217,24 @@ class Channels extends React.Component {
               this.setState({error:"Something went wrong"})
             });
           }
+          else{
+            found=true;
+          }
           validCode=true;
         }
       })
     })
     console.log(validCode);
     console.log(found);
-    if(!validCode){
+
+    if(validCode==false){
       this.setState({error:"Invalid Code"})
     }
-    else if(!found){
+    else if(found){
       this.setState({error:"Already member of the channel"})
-    }else{
+    }
+    else{
+      this.setState({error:""})
       this.setActiveChannel(channelCode);
     }
 

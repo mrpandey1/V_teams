@@ -40,10 +40,6 @@ componentDidMount(){
     .catch(err=>{
     })
     
-    console.log(this.state.channel.name);
-    console.log(this.state.channel.id);
-    console.log(this.state.todoMessage);
-    console.log(this.state.messages);
   }
   
   addMessageListener = channelId => {

@@ -5,6 +5,10 @@
 }
 
 .message{
-    margin-bottom: 4px;
-    padding: 1px 10px;
+    margin:4px;
+    padding: 2px 10px;
+    background-color: #F8D7DA;
+    border: 1px solid pink;
+    border-radius: 2px;
+    color: #842029;
 }
