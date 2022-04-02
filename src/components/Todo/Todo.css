@@ -7,8 +7,33 @@
 .message{
     margin:4px;
     padding: 2px 10px;
-    background-color: #F8D7DA;
-    border: 1px solid pink;
     border-radius: 2px;
-    color: #842029;
+}
+
+
+.todoShow{
+    -ms-overflow-style: none;
+}
+.todoShow::-webkit-scrollbar {
+    display: none;
+}
+.datepicker{
+    z-index: 99 !important;
+}
+
+.green2{
+    background-Color:#d0f0c0;
+    border: 1px solid rgb(2, 155, 2);
+    color: green;
+}
+.red2{
+    background-Color:linen;
+    border: 1px solid red;
+    color: red;
+
+}
+.yellow2{
+    background-Color:#ffffe0;
+    border: 1px solid rgb(172, 172, 4);
+    color: darkgoldenrod;
 }
